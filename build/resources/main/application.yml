@@ -4,6 +4,11 @@ server:
 spring:
     application:
       name: "social"
+    datasource:
+      url: jdbc:mysql://127.0.0.1:3306/Oauth2?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+      username: test
+      password: test1234!@#$
+      driver-class-name: com.mysql.cj.jdbc.Driver
 
     security:
       oauth2:

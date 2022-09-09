@@ -68,6 +68,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .getBuilder("facebook")
                 .clientId(clientId)
                 .clientSecret(clientSecret)
+                // 요청 엑세스 권한 수집 추가
+                .scope(
+                        "public_profile",
+                        "email", // 이메일 수집
+                        "user_birthday", // 생년월일 수집
+                        "user_gender" // 성별 수집
+                )
+                // 커스텀 마이징을 통해 원래 email만 수집 되던 것을 gender, birthday를 추가한 것을 볼 수 있다.
+                .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,picutre,gender,birthday")
                 .build();
     }
     // 실제 토큰과 OAuth 와 통신
