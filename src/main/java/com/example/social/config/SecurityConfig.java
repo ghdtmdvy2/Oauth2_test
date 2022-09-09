@@ -25,17 +25,25 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final Environment environment; // 각 환경에 대한 설정 변경이 필요하기 위해 가져옴.
     private final String registration = "spring.security.oauth2.client.registration."; // facebook과 google의 커스텀 마이징을 위한 yml 파일 가져오기.
+
+    private final FacebookOauth2UserService facebookOauth2UserService;
+    private final GoogleOauth2UserService googleOauth2UserService;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
                 .authorizeRequests(authorize -> authorize
                         .antMatchers("/login","/index").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()
+                )
 
                 .oauth2Login(oauth2 -> oauth2
                         .clientRegistrationRepository(clientRegistrationRepository())
                         .authorizedClientService(auth2AuthorizedClientService())
+                        .userInfoEndpoint( user -> user
+                                .oidcUserService(googleOauth2UserService) // google 인증, OpenID Connect 1.0를 이용하여 통신(인증)하기 때문에 메서드 이름이 다르다.
+                                .userService(facebookOauth2UserService) // facebook 인증, OAuth2 통신
+                        )
                 );
     }
 
@@ -76,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "user_gender" // 성별 수집
                 )
                 // 커스텀 마이징을 통해 원래 email만 수집 되던 것을 gender, birthday를 추가한 것을 볼 수 있다.
-                .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,picutre,gender,birthday")
+                .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,gender,birthday")
                 .build();
     }
     // 실제 토큰과 OAuth 와 통신

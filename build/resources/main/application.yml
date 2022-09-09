@@ -10,6 +10,14 @@ spring:
       password: test1234!@#$
       driver-class-name: com.mysql.cj.jdbc.Driver
 
+    jpa:
+      database: mysql
+      show-sql: true
+      generate-ddl: true
+      open-in-view: false
+      hibernate:
+        ddl-auto: create
+
     security:
       oauth2:
         client:
